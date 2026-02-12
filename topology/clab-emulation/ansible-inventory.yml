@@ -1,0 +1,45 @@
+all:
+  vars:
+    # The generated inventory is assumed to be used from the clab host.
+    # Hence no http proxy should be used. Therefore we make sure the http
+    # module does not attempt using any global http proxy.
+    ansible_httpapi_use_proxy: false
+  children:
+    linux:
+      hosts:
+        clab-emulation-R1:
+          ansible_host: 172.20.20.3
+        clab-emulation-R2:
+          ansible_host: 172.20.20.2
+        clab-emulation-serf1:
+          ansible_host: 172.20.20.9
+        clab-emulation-serf10:
+          ansible_host: 172.20.20.13
+        clab-emulation-serf11:
+          ansible_host: 172.20.20.12
+        clab-emulation-serf2:
+          ansible_host: 172.20.20.7
+        clab-emulation-serf3:
+          ansible_host: 172.20.20.8
+        clab-emulation-serf4:
+          ansible_host: 172.20.20.14
+        clab-emulation-serf5:
+          ansible_host: 172.20.20.10
+        clab-emulation-serf6:
+          ansible_host: 172.20.20.11
+        clab-emulation-serf7:
+          ansible_host: 172.20.20.4
+        clab-emulation-serf8:
+          ansible_host: 172.20.20.5
+        clab-emulation-serf9:
+          ansible_host: 172.20.20.6
+    ovs-bridge:
+      hosts:
+        clab-emulation-switch_a:
+          ansible_host: 
+        clab-emulation-switch_b:
+          ansible_host: 
+        clab-emulation-switch_c:
+          ansible_host: 
+        clab-emulation-switch_d:
+          ansible_host: 

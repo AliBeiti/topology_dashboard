@@ -1,0 +1,938 @@
+{
+  "name": "emulation",
+  "type": "clab",
+  "clab": {
+    "config": {
+      "prefix": "clab",
+      "mgmt": {
+        "network": "clab",
+        "bridge": "br-4b75cfde7120",
+        "ipv4-subnet": "172.20.20.0/24",
+        "ipv4-gw": "172.20.20.1",
+        "ipv6-subnet": "3fff:172:20:20::/64",
+        "ipv6-gw": "3fff:172:20:20::1",
+        "external-access": true
+      }
+    }
+  },
+  "ssh-pub-keys": ["ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJL7YGR/9L0VJ7PT9dakVZvJzinfd1VyjbFUDJq3oNxx"],
+  "nodes": {
+    "R1": {
+      "index": "0",
+      "shortname": "R1",
+      "longname": "clab-emulation-R1",
+      "fqdn": "R1.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/R1",
+      "kind": "linux",
+      "image": "frrouting/frr:v7.5.1",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.3",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::3",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/R1",
+        "clab-node-longname": "clab-emulation-R1",
+        "clab-node-name": "R1",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+      ]
+    },
+    "R2": {
+      "index": "1",
+      "shortname": "R2",
+      "longname": "clab-emulation-R2",
+      "fqdn": "R2.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/R2",
+      "kind": "linux",
+      "image": "frrouting/frr:v7.5.1",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.2",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::2",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/R2",
+        "clab-node-longname": "clab-emulation-R2",
+        "clab-node-name": "R2",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+      ]
+    },
+    "serf1": {
+      "index": "2",
+      "shortname": "serf1",
+      "longname": "clab-emulation-serf1",
+      "fqdn": "serf1.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf1",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.9",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::9",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf1",
+        "clab-node-longname": "clab-emulation-serf1",
+        "clab-node-name": "serf1",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10091,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10091,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf10": {
+      "index": "3",
+      "shortname": "serf10",
+      "longname": "clab-emulation-serf10",
+      "fqdn": "serf10.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf10",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.13",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::d",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf10",
+        "clab-node-longname": "clab-emulation-serf10",
+        "clab-node-name": "serf10",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10100,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10100,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf11": {
+      "index": "4",
+      "shortname": "serf11",
+      "longname": "clab-emulation-serf11",
+      "fqdn": "serf11.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf11",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.12",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::c",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf11",
+        "clab-node-longname": "clab-emulation-serf11",
+        "clab-node-name": "serf11",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10101,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10101,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf2": {
+      "index": "5",
+      "shortname": "serf2",
+      "longname": "clab-emulation-serf2",
+      "fqdn": "serf2.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf2",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.7",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::7",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf2",
+        "clab-node-longname": "clab-emulation-serf2",
+        "clab-node-name": "serf2",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10092,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10092,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf3": {
+      "index": "6",
+      "shortname": "serf3",
+      "longname": "clab-emulation-serf3",
+      "fqdn": "serf3.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf3",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.8",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::8",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf3",
+        "clab-node-longname": "clab-emulation-serf3",
+        "clab-node-name": "serf3",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10093,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10093,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf4": {
+      "index": "7",
+      "shortname": "serf4",
+      "longname": "clab-emulation-serf4",
+      "fqdn": "serf4.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf4",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.14",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::e",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf4",
+        "clab-node-longname": "clab-emulation-serf4",
+        "clab-node-name": "serf4",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10094,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10094,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf5": {
+      "index": "8",
+      "shortname": "serf5",
+      "longname": "clab-emulation-serf5",
+      "fqdn": "serf5.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf5",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.10",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::a",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf5",
+        "clab-node-longname": "clab-emulation-serf5",
+        "clab-node-name": "serf5",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10095,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10095,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf6": {
+      "index": "9",
+      "shortname": "serf6",
+      "longname": "clab-emulation-serf6",
+      "fqdn": "serf6.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf6",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.11",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::b",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf6",
+        "clab-node-longname": "clab-emulation-serf6",
+        "clab-node-name": "serf6",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10096,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10096,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf7": {
+      "index": "10",
+      "shortname": "serf7",
+      "longname": "clab-emulation-serf7",
+      "fqdn": "serf7.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf7",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.4",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::4",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf7",
+        "clab-node-longname": "clab-emulation-serf7",
+        "clab-node-name": "serf7",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10097,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10097,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf8": {
+      "index": "11",
+      "shortname": "serf8",
+      "longname": "clab-emulation-serf8",
+      "fqdn": "serf8.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf8",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.5",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::5",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf8",
+        "clab-node-longname": "clab-emulation-serf8",
+        "clab-node-name": "serf8",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10098,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10098,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "serf9": {
+      "index": "12",
+      "shortname": "serf9",
+      "longname": "clab-emulation-serf9",
+      "fqdn": "serf9.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/serf9",
+      "kind": "linux",
+      "image": "abdullahmuzlim279/k3s-serf-node:warmcache-test",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "172.20.20.6",
+      "mgmt-ipv4-prefix-length": 24,
+      "mgmt-ipv6-address": "3fff:172:20:20::6",
+      "mgmt-ipv6-prefix-length": 64,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "linux",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/serf9",
+        "clab-node-longname": "clab-emulation-serf9",
+        "clab-node-name": "serf9",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+        {
+          "host-ip": "0.0.0.0",
+          "host-port": 10099,
+          "port": 9090,
+          "protocol": "tcp"
+        },
+        {
+          "host-ip": "::",
+          "host-port": 10099,
+          "port": 9090,
+          "protocol": "tcp"
+        }
+      ]
+    },
+    "switch_a": {
+      "index": "13",
+      "shortname": "switch_a",
+      "longname": "clab-emulation-switch_a",
+      "fqdn": "switch_a.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/switch_a",
+      "kind": "ovs-bridge",
+      "image": "",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "",
+      "mgmt-ipv4-prefix-length": 0,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "ovs-bridge",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/switch_a",
+        "clab-node-longname": "clab-emulation-switch_a",
+        "clab-node-name": "switch_a",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+      ]
+    },
+    "switch_b": {
+      "index": "14",
+      "shortname": "switch_b",
+      "longname": "clab-emulation-switch_b",
+      "fqdn": "switch_b.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/switch_b",
+      "kind": "ovs-bridge",
+      "image": "",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "",
+      "mgmt-ipv4-prefix-length": 0,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "ovs-bridge",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/switch_b",
+        "clab-node-longname": "clab-emulation-switch_b",
+        "clab-node-name": "switch_b",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+      ]
+    },
+    "switch_c": {
+      "index": "15",
+      "shortname": "switch_c",
+      "longname": "clab-emulation-switch_c",
+      "fqdn": "switch_c.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/switch_c",
+      "kind": "ovs-bridge",
+      "image": "",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "",
+      "mgmt-ipv4-prefix-length": 0,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "ovs-bridge",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/switch_c",
+        "clab-node-longname": "clab-emulation-switch_c",
+        "clab-node-name": "switch_c",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+      ]
+    },
+    "switch_d": {
+      "index": "16",
+      "shortname": "switch_d",
+      "longname": "clab-emulation-switch_d",
+      "fqdn": "switch_d.emulation.io",
+      "group": "",
+      "labdir": "/home/ali/Documents/emulation-topology/clab-emulation/switch_d",
+      "kind": "ovs-bridge",
+      "image": "",
+      "mgmt-net": "",
+      "mgmt-intf": "",
+      "mgmt-ipv4-address": "",
+      "mgmt-ipv4-prefix-length": 0,
+      "mgmt-ipv6-address": "",
+      "mgmt-ipv6-prefix-length": 0,
+      "mac-address": "",
+      "labels": {
+        "clab-mgmt-net-bridge": "br-4b75cfde7120",
+        "clab-node-group": "",
+        "clab-node-kind": "ovs-bridge",
+        "clab-node-lab-dir": "/home/ali/Documents/emulation-topology/clab-emulation/switch_d",
+        "clab-node-longname": "clab-emulation-switch_d",
+        "clab-node-name": "switch_d",
+        "clab-node-type": "",
+        "clab-owner": "ali",
+        "clab-topo-file": "/home/ali/Documents/emulation-topology/emulation.yml",
+        "containerlab": "emulation"
+      },
+      "port-bindings": [
+      ]
+    }
+  },
+  "links": [
+    {
+      "endpoints": {
+        "a": {
+          "node": "R1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:bc:06:68",
+          "peer": "z"
+        },
+        "z": {
+          "node": "R2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:b1:bf:f6",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "R1",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:92:10:ce",
+          "peer": "z"
+        },
+        "z": {
+          "node": "switch_a",
+          "interface": "eth100",
+          "mac": "aa:c1:ab:98:03:bf",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "R1",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:ff:b6:8f",
+          "peer": "z"
+        },
+        "z": {
+          "node": "switch_b",
+          "interface": "eth200",
+          "mac": "aa:c1:ab:b4:13:3b",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "R2",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:23:ae:ef",
+          "peer": "z"
+        },
+        "z": {
+          "node": "switch_c",
+          "interface": "eth300",
+          "mac": "aa:c1:ab:f4:fa:29",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "R2",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:a5:f6:cf",
+          "peer": "z"
+        },
+        "z": {
+          "node": "switch_d",
+          "interface": "eth400",
+          "mac": "aa:c1:ab:5e:fc:2e",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_a",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:27:18:18",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf1",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:83:4a:45",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_a",
+          "interface": "eth2",
+          "mac": "aa:c1:ab:29:64:8a",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf2",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:b6:ad:4b",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_a",
+          "interface": "eth3",
+          "mac": "aa:c1:ab:4b:15:33",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf3",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:3d:a1:e0",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_b",
+          "interface": "eth4",
+          "mac": "aa:c1:ab:e1:1b:09",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf4",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:36:30:6f",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_b",
+          "interface": "eth5",
+          "mac": "aa:c1:ab:e6:1a:2a",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf5",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:cd:84:98",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_b",
+          "interface": "eth6",
+          "mac": "aa:c1:ab:23:8d:bb",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf6",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:46:38:0f",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_c",
+          "interface": "eth7",
+          "mac": "aa:c1:ab:b5:9e:17",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf7",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:a1:26:80",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_c",
+          "interface": "eth8",
+          "mac": "aa:c1:ab:f7:08:f6",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf8",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:e2:df:b2",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_c",
+          "interface": "et9",
+          "mac": "aa:c1:ab:e7:75:17",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf9",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:35:42:6b",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_d",
+          "interface": "eth10",
+          "mac": "aa:c1:ab:32:dc:dc",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf10",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:4f:19:8e",
+          "peer": "a"
+        }
+      }
+    },
+    {
+      "endpoints": {
+        "a": {
+          "node": "switch_d",
+          "interface": "eth11",
+          "mac": "aa:c1:ab:40:48:a2",
+          "peer": "z"
+        },
+        "z": {
+          "node": "serf11",
+          "interface": "eth1",
+          "mac": "aa:c1:ab:75:5c:70",
+          "peer": "a"
+        }
+      }
+    }
+  ]
+}

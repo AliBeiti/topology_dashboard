@@ -1,0 +1,86 @@
+---
+R1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.3
+R2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.2
+serf1:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.9
+serf10:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.13
+serf11:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.12
+serf2:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.7
+serf3:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.8
+serf4:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.14
+serf5:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.10
+serf6:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.11
+serf7:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.4
+serf8:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.5
+serf9:
+    username: 
+    password: 
+    platform: linux
+    hostname: 172.20.20.6
+switch_a:
+    username: 
+    password: 
+    platform: ovs-bridge
+    hostname: 
+switch_b:
+    username: 
+    password: 
+    platform: ovs-bridge
+    hostname: 
+switch_c:
+    username: 
+    password: 
+    platform: ovs-bridge
+    hostname: 
+switch_d:
+    username: 
+    password: 
+    platform: ovs-bridge
+    hostname: 
