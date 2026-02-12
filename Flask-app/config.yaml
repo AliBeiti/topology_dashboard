@@ -1,6 +1,6 @@
 # Topology Viewer Configuration
 containerlab:
-  topology_file: "/home/ali/Documents/emulation-topology/emulation.yml"
+  topology_file: "../topology/emulation.yml"
   
 server:
   host: "0.0.0.0"

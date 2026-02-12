@@ -1,0 +1,60 @@
+# Prometheus Configuration for KWOK Workload Emulation
+# Scrapes metrics from all serf nodes in the ContainerLab topology
+
+global:
+  scrape_interval: 2s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'kwok-emulation'
+
+# Alertmanager configuration (optional)
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['localhost:9093']
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    scrape_timeout: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node exporter (host machine metrics)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['localhost:9100']
+
+  # KWOK emulation metrics from all serf nodes
+  # 🔴 EDIT: Add/remove targets based on your number of serf nodes
+  # Port mapping: serf1=10091, serf2=10092, ..., serf11=10101
+  - job_name: 'kwok-emulation'
+    scrape_interval: 2s
+    scrape_timeout: 2s
+    static_configs:
+      - targets:
+        - 'clab-emulation-serf1:10091'  # serf1
+        - 'clab-emulation-serf2:10092'  # serf2
+        - 'clab-emulation-serf3:10093'  # serf3
+        - 'clab-emulation-serf4:10094'  # serf4
+        - 'clab-emulation-serf5:10095'  # serf5
+        - 'clab-emulation-serf6:10096'  # serf6
+        - 'clab-emulation-serf7:10097'  # serf7
+        - 'clab-emulation-serf8:10098'  # serf8
+        - 'clab-emulation-serf9:10099'  # serf9
+        - 'clab-emulation-serf10:10100'  # serf10
+        - 'locaclab-emulation-serf11:10101'  # serf11
+    
+    relabel_configs:
+      # Extract node number from port 1009X → serfX
+      - source_labels: [__address__]
+        regex: 'localhost:1009(\d)'
+        target_label: 'container_node'
+        replacement: 'serf${1}'
+      
+      # Extract node number from port 1010X → serf1X
+      - source_labels: [__address__]
+        regex: 'localhost:1010(\d)'
+        target_label: 'container_node'
+        replacement: 'serf1${1}'
