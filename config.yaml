@@ -1,0 +1,26 @@
+# Topology Viewer Configuration
+containerlab:
+  topology_file: "/home/ali/Documents/emulation-topology/emulation.yml"
+  
+server:
+  host: "0.0.0.0"
+  port: 8080
+  debug: true
+
+monitoring:
+  mode: "central"
+  
+  central_prometheus:
+    enabled: true
+    port: 9091
+    host: "localhost"
+  
+  central_grafana:
+    enabled: true
+    port: 3000
+    host: "localhost"
+    dashboard_uid: "ad666gf"
+  
+  default_dashboards:
+    prometheus: "/graph"
+    grafana: "/d/node-overview"

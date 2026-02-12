@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ContainerLab Topology Viewer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
+    <!-- vis.js for network visualization -->
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔬 ContainerLab Topology Viewer</h1>
+            <div class="header-info">
+                <span id="topology-name">Loading...</span>
+                <button id="refresh-btn" onclick="refreshTopology()">🔄 Refresh</button>
+            </div>
+        </header>
+        <div class="system-status-bar">
+            <div class="status-item">
+                <span class="status-label">🖥️ Host CPU:</span>
+                <span class="status-value" id="host-cpu">--</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">💾 Host RAM:</span>
+                <span class="status-value" id="host-ram">--</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">💿 Host Disk:</span>
+                <span class="status-value" id="host-disk">--</span>
+            </div>
+            <div class="status-indicator" id="system-status-indicator">●</div>
+        </div>
+        <div class="main-content">
+            <div class="sidebar">
+                <h3>Topology Info</h3>
+                <div id="topology-stats">
+                    <p>Nodes: <span id="node-count">-</span></p>
+                    <p>Links: <span id="link-count">-</span></p>
+                    <p>Running: <span id="running-count">-</span></p>
+                </div>
+
+                <h3>Node Details</h3>
+                <div id="node-details">
+                    <p class="hint">Click on a node to see details</p>
+                </div>
+            
+            
+            <h3>🔗 Virtual Pods</h3>
+            <div id="virtual-pods-section">
+                <div id="virtual-pods-list">
+                    <p class="hint">No virtual pods created yet</p>
+                </div>
+                <button id="refresh-pods-btn" onclick="loadVirtualPods()" class="refresh-pods-btn">
+                    🔄 Refresh
+                </button>
+            </div>
+        </div>
+
+            <div class="network-container">
+                <div id="topology-network"></div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Click on nodes to access their Prometheus/Grafana dashboards</p>
+        </footer>
+    </div>
+
+    <div id="node-context-menu" class="context-menu"> <!-- Right Click Dropdown Menu -->
+        <ul>
+            <li id="menu-option-b">Create Pod</li>
+            <li id="menu-option-c">Liqo Connect</li>
+            <li id="menu-option-delete-liqo">Remove Liqo Links</li>
+        </ul>
+    </div>
+
+    <div id="cluster-popup" class="cluster-popup" style="display:none;"> <!-- Cluster Overview Pop Up for Liqo Connection -->
+        <button id="cluster-close" class="cluster-close">×</button>
+        <h4 id="cluster-title">K3s Cluster</h4>
+
+        <div id="cluster-top-row" class="cluster-row"></div>
+        <div id="cluster-bottom-row" class="cluster-row"></div>
+    </div>
+
+    <script src="js/topology.js"></script>
+    <!-- Modal for displaying metrics graphs -->
+    <div id="metrics-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Node Metrics</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <canvas id="metrics-chart"></canvas>
+            </div>
+        </div>
+    </div>
+    <!-- Virtual Pod Creation Modal -->
+    <div id="virtual-pod-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create Virtual Pod</h3>
+                <span class="modal-close" onclick="closeVirtualPodModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="virtual-pod-form">
+                    <div class="form-group">
+                        <label>Source Node:</label>
+                        <input type="text" id="vp-source-node" readonly>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Destination Node:</label>
+                        <select id="vp-dest-node" required>
+                            <option value="">-- Select Destination --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Workload Template:</label>
+                        <select id="vp-workload" required>
+                            <option value="">-- Select Workload --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Update Interval (seconds):</label>
+                        <input type="number" id="vp-interval" value="5" min="1" max="60">
+                    </div>
+                    
+                    <div class="workload-preview" id="workload-preview" style="display:none;">
+                        <h4>Workload Preview</h4>
+                        <p id="preview-info"></p>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeVirtualPodModal()">Cancel</button>
+                        <button type="submit" class="btn-primary">Create Virtual Pod</button>
+                    </div>
+                </form>
+                
+                <div id="vp-creation-status" style="display:none; margin-top: 1rem;">
+                    <p id="vp-status-message"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Delete Liqo Links Modal -->
+    <div id="delete-liqo-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Remove Liqo Connections</h3>
+                <span class="modal-close" onclick="closeDeleteLiqoModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p id="delete-liqo-node-name" style="font-weight: bold; margin-bottom: 1rem;"></p>
+                <div id="liqo-connections-list"></div>
+                <div class="form-actions" style="margin-top: 1rem;">
+                    <button type="button" class="btn-secondary" onclick="closeDeleteLiqoModal()">Cancel</button>
+                    <button type="button" class="btn-primary" style="background-color: #E74C3C;" onclick="deleteSelectedLiqoLinks()">Remove Selected</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
