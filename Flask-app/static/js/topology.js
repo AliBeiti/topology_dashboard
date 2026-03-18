@@ -1268,6 +1268,14 @@ document.getElementById('menu-option-b').addEventListener('click', () => {
 
 document.getElementById('menu-option-c').addEventListener('click', () => handleMenuAction('C'));
 
+document.getElementById('menu-option-view-liqo-pods').addEventListener('click', async () => {
+    const nodeId = menu.dataset.nodeId;
+    menu.style.display = 'none';
+    
+    // Fetch and display liqo pods
+    await viewLiqoPods(nodeId);
+});
+
 // Pod creation mode (similar to connect mode)
 let podCreationMode = false;
 let podCreationSourceNode = null;
@@ -1350,16 +1358,26 @@ async function animatePodTransfer(fromId, toId) {
  
     // Animate pod loading in a DOM element
     async function hoverPodOverElement(elem, clusternodetext, iterations = 3, delay = 300) {
+        // Store original border style
+        const originalBorder = elem.style.border;
+        
         for (let i = 0; i < iterations; i++) {
             elem.textContent = `${clusternodetext} (📦..)`;
+            elem.style.border = '2px solid #e74c3c';
             await new Promise(r => setTimeout(r, delay));
+            
             elem.textContent = ` ${clusternodetext} (.📦.) `;
+            elem.style.border = '2px solid #e74c3c';
             await new Promise(r => setTimeout(r, delay));
+            
             elem.textContent = `${clusternodetext} ( ..📦)   `;
+            elem.style.border = '2px solid #e74c3c';
             await new Promise(r => setTimeout(r, delay));
         }
-        // Restore original
+        
+        // Restore original border and text
         elem.textContent = clusternodetext;
+        elem.style.border = originalBorder;
     }
  
     // Hover over master node in popup
@@ -2143,4 +2161,637 @@ document.addEventListener('DOMContentLoaded', function() {
             await createVirtualPod();
         });
     }
+});
+
+
+async function viewLiqoPods(nodeId) {
+    try {
+        const response = await fetch(`/api/node/${nodeId}/cluster-info`);
+        const clusterInfo = await response.json();
+        
+        if (!response.ok) {
+            alert('Failed to fetch cluster information');
+            return;
+        }
+        
+        // Get all pods from all namespaces
+        const allPods = clusterInfo.pods_by_namespace || {};
+        
+        if (Object.keys(allPods).length === 0) {
+            alert('No pods found');
+            return;
+        }
+        
+        // Display in modal
+        showLiqoPodsModal(nodeId, allPods);
+        
+    } catch (error) {
+        console.error('Error fetching liqo pods:', error);
+        alert('Failed to load pods: ' + error.message);
+    }
+}
+
+function showLiqoPodsModal(nodeId, podsByNamespace) {
+    const modal = document.getElementById('liqo-pods-modal');
+    const podsContainer = document.getElementById('liqo-pods-container');
+    const title = document.getElementById('liqo-pods-title');
+    
+    title.textContent = `All Pods - ${nodeId}`;
+    
+    let html = '<div class="all-pods-list">';
+    
+    // Iterate through all namespaces
+    for (const [namespace, pods] of Object.entries(podsByNamespace)) {
+        const namespaceSectionId = `namespace-${namespace}-${nodeId}`;
+        const podsListId = `pods-list-${namespace}-${nodeId}`;
+        
+        html += `
+            <div class="pods-namespace-section" style="margin: 0.5rem 0; border: 1px solid #bdc3c7; border-radius: 4px; overflow: hidden;">
+                <div class="namespace-header collapsible" onclick="toggleNamespacePods('${podsListId}')" style="padding: 0.8rem; background: #34495e; color: white; cursor: pointer; display: flex; align-items: center; user-select: none;">
+                    <span class="toggle-icon" id="toggle-${podsListId}" style="margin-right: 0.5rem; font-weight: bold;">▶</span>
+                    <h5 style="margin: 0; font-size: 1rem;">${namespace}</h5>
+                    <span style="margin-left: auto; font-size: 0.9rem; opacity: 0.8;">${pods.length} pods</span>
+                </div>
+                <div class="pods-content" id="${podsListId}" style="display: none; padding: 0.5rem; background: #f8f9fa;">
+        `;
+        
+        pods.forEach(pod => {
+            html += `
+                <div class="all-pod-item" style="display: flex; justify-content: space-between; align-items: center; padding: 0.6rem; margin: 0.4rem 0; background: white; border-radius: 4px; border-left: 3px solid #3498db; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <div style="flex: 1;">
+                        <span class="pod-name" style="font-weight: bold; color: #2c3e50;">${pod.name}</span>
+                        <span class="pod-status status-${pod.status.toLowerCase()}" style="margin-left: 0.5rem; padding: 0.2rem 0.5rem; border-radius: 3px; font-size: 0.85rem; background: ${getStatusColor(pod.status)}; color: white;">${pod.status}</span>
+                    </div>
+                    <div class="pod-controls" style="display: flex; gap: 0.3rem; margin-left: auto;">
+                        <button class="pod-metric-btn" onclick="openPodMetricsModalMulti('${nodeId}', '${namespace}', '${pod.name}', 'cpu')" title="CPU" style="padding: 0.3rem 0.5rem; border: none; background: #3498db; color: white; border-radius: 3px; cursor: pointer; font-size: 0.85rem;">📊</button>
+                        <button class="pod-metric-btn" onclick="openPodMetricsModalMulti('${nodeId}', '${namespace}', '${pod.name}', 'memory')" title="Memory" style="padding: 0.3rem 0.5rem; border: none; background: #9b59b6; color: white; border-radius: 3px; cursor: pointer; font-size: 0.85rem;">💾</button>
+                        <button class="pod-metric-btn" onclick="openPodMetricsModalMulti('${nodeId}', '${namespace}', '${pod.name}', 'psi')" title="PSI" style="padding: 0.3rem 0.5rem; border: none; background: #e74c3c; color: white; border-radius: 3px; cursor: pointer; font-size: 0.85rem;">⚡</button>
+                        <button class="pod-metric-btn" onclick="openPodMetricsModalMulti('${nodeId}', '${namespace}', '${pod.name}', 'power')" title="Power" style="padding: 0.3rem 0.5rem; border: none; background: #f39c12; color: white; border-radius: 3px; cursor: pointer; font-size: 0.85rem;">🔋</button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+    }
+
+    // Add Overall Node Metrics section at the bottom
+    html += `
+        <div class="node-metrics-section" style="margin: 1rem 0 0 0; padding: 1rem; background: #34495e; border-radius: 4px; border-top: 2px solid #3498db;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h5 style="margin: 0; color: white; font-size: 1rem;">Overall Node Metrics</h5>
+                <div class="node-metric-controls" style="display: flex; gap: 0.5rem;">
+                    <button class="metric-btn" onclick="openMetricsModalMulti('${nodeId}', 'cpu')" title="CPU" style="padding: 0.4rem 0.8rem; border: none; background: #3498db; color: white; border-radius: 3px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">📊 CPU</button>
+                    <button class="metric-btn" onclick="openMetricsModalMulti('${nodeId}', 'memory')" title="Memory" style="padding: 0.4rem 0.8rem; border: none; background: #9b59b6; color: white; border-radius: 3px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">💾 Memory</button>
+                    <button class="metric-btn" onclick="openMetricsModalMulti('${nodeId}', 'psi')" title="PSI" style="padding: 0.4rem 0.8rem; border: none; background: #e74c3c; color: white; border-radius: 3px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">⚡ PSI</button>
+                    <button class="metric-btn" onclick="openMetricsModalMulti('${nodeId}', 'power')" title="Power" style="padding: 0.4rem 0.8rem; border: none; background: #f39c12; color: white; border-radius: 3px; cursor: pointer; font-size: 0.85rem; font-weight: bold;">🔋 Power</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    html += '</div>';
+    
+    podsContainer.innerHTML = html;
+    modal.style.display = 'block';
+}
+
+function toggleNamespacePods(elementId) {
+    const element = document.getElementById(elementId);
+    const toggleIcon = document.getElementById(`toggle-${elementId}`);
+    
+    if (element.style.display === 'none') {
+        element.style.display = 'block';
+        toggleIcon.textContent = '▼';
+    } else {
+        element.style.display = 'none';
+        toggleIcon.textContent = '▶';
+    }
+}
+
+function getStatusColor(status) {
+    switch(status.toLowerCase()) {
+        case 'running':
+            return '#27ae60';
+        case 'pending':
+            return '#f39c12';
+        case 'failed':
+            return '#e74c3c';
+        default:
+            return '#95a5a6';
+    }
+}
+
+function closeLiqoPodsModal() {
+    const modal = document.getElementById('liqo-pods-modal');
+    modal.style.display = 'none';
+}
+
+// Track dragging state
+let draggedElement = null;
+let offsetX = 0;
+let offsetY = 0;
+let graphCount = 0;
+const openGraphs = {};
+
+// Make modals draggable
+function makeModalDraggable(modal) {
+    const header = modal.querySelector('.modal-header');
+    
+   
+    
+    if (!header) return;
+    
+    header.addEventListener('mousedown', (e) => {
+        draggedElement = modal;
+        offsetX = e.clientX - modal.offsetLeft;
+        offsetY = e.clientY - modal.offsetTop;
+        modal.style.cursor = 'grabbing';
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (draggedElement) {
+            draggedElement.style.position = 'fixed';
+            draggedElement.style.left = (e.clientX - offsetX) + 'px';
+            draggedElement.style.top = (e.clientY - offsetY) + 'px';
+            draggedElement.style.margin = '0';
+        }
+    });
+    
+    document.addEventListener('mouseup', () => {
+        if (draggedElement) {
+            draggedElement.style.cursor = 'auto';
+        }
+        draggedElement = null;
+    });
+}
+
+// Store auto-refresh intervals
+const autoRefreshIntervals = {};
+
+// Open multiple pod metrics in separate draggable windows
+function openPodMetricsModalMulti(nodeName, namespace, podName, metricType) {
+    graphCount++;
+    const graphId = `pod-metrics-${graphCount}`;
+    const chartCanvasId = `chart-${graphCount}`;
+
+
+    // Create modal
+    const modal = document.createElement('div');
+    modal.id = graphId;
+    modal.className = 'floating-graph-modal';
+    modal.style.left = (50 + graphCount * 35) + 'px';
+    modal.style.top = (50 + graphCount * 35) + 'px';
+    modal.style.width = '687px';
+    modal.style.minHeight = '520px';
+    modal.dataset.timeWindow = '5m';
+    modal.dataset.isPod = 'true';
+    modal.dataset.nodeName = nodeName;
+    modal.dataset.namespace = namespace;
+    modal.dataset.podName = podName;
+    modal.dataset.metricType = metricType;
+    
+    modal.innerHTML = `
+        <div class="modal-header">
+            <h3 style="margin: 0; font-size: 1rem;">${podName} - ${metricType.toUpperCase()}</h3>
+            <span class="modal-close" onclick="closeFloatingGraph('${graphId}')" style="cursor: pointer; color: white; font-size: 1.5rem;">&times;</span>
+        </div>
+        <div class="time-range-controls" style="padding: 0.8rem 1rem; background: #ecf0f1; border-bottom: 1px solid #bdc3c7;">
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <button class="time-btn active" onclick="changeTimeRangeMulti('${graphId}', '5m')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">5m</button>
+                <button class="time-btn" onclick="changeTimeRangeMulti('${graphId}', '15m')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">15m</button>
+                <button class="time-btn" onclick="changeTimeRangeMulti('${graphId}', '1h')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">1h</button>
+                <button class="time-btn" onclick="changeTimeRangeMulti('${graphId}', '2h')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">2h</button>
+                <div style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" id="refresh-toggle-${graphId}" onchange="toggleAutoRefreshMulti('${graphId}')" style="cursor: pointer;" checked>
+                    <label for="refresh-toggle-${graphId}" style="font-size: 0.85rem; cursor: pointer; margin: 0;">Auto</label>
+                    <span class="refresh-indicator" id="refresh-indicator-${graphId}" style="width: 8px; height: 8px; background: #27ae60; border-radius: 50%; animation: pulse 2s ease-in-out infinite;"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+            <canvas id="${chartCanvasId}" style="height: 300px; width: 100%;"></canvas>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    openGraphs[graphId] = graphCount;
+    
+    makeModalDraggable(modal);
+    
+    // Load chart after modal is added to DOM
+    setTimeout(() => {
+        loadPodMetricsChartMulti(nodeName, namespace, podName, metricType, '5m', chartCanvasId);
+        toggleAutoRefreshMulti(graphId);
+    }, 100);
+}
+
+// Open multiple node metrics in separate draggable windows
+function openMetricsModalMulti(nodeName, metricType) {
+    graphCount++;
+    const graphId = `metrics-${graphCount}`;
+    const chartCanvasId = `chart-${graphCount}`;
+
+
+    // Create modal
+    const modal = document.createElement('div');
+    modal.id = graphId;
+    modal.className = 'floating-graph-modal';
+    modal.style.left = (50 + graphCount * 35) + 'px';
+    modal.style.top = (50 + graphCount * 35) + 'px';
+    modal.style.width = '687px';
+    modal.style.minHeight = '520px';
+    modal.dataset.timeWindow = '5m';
+    modal.dataset.isPod = 'false';
+    modal.dataset.nodeName = nodeName;
+    modal.dataset.metricType = metricType;
+    
+    modal.innerHTML = `
+        <div class="modal-header">
+            <h3 style="margin: 0; font-size: 1rem;">${nodeName} - ${metricType.toUpperCase()}</h3>
+            <span class="modal-close" onclick="closeFloatingGraph('${graphId}')" style="cursor: pointer; color: white; font-size: 1.5rem;">&times;</span>
+        </div>
+        <div class="time-range-controls" style="padding: 0.8rem 1rem; background: #ecf0f1; border-bottom: 1px solid #bdc3c7;">
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                <button class="time-btn active" onclick="changeTimeRangeMulti('${graphId}', '5m')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">5m</button>
+                <button class="time-btn" onclick="changeTimeRangeMulti('${graphId}', '15m')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">15m</button>
+                <button class="time-btn" onclick="changeTimeRangeMulti('${graphId}', '1h')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">1h</button>
+                <button class="time-btn" onclick="changeTimeRangeMulti('${graphId}', '2h')" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;">2h</button>
+                <div style="margin-left: auto; display: flex; align-items: center; gap: 0.5rem;">
+                    <input type="checkbox" id="refresh-toggle-${graphId}" onchange="toggleAutoRefreshMulti('${graphId}')" style="cursor: pointer;" checked>
+                    <label for="refresh-toggle-${graphId}" style="font-size: 0.85rem; cursor: pointer; margin: 0;">Auto</label>
+                    <span class="refresh-indicator" id="refresh-indicator-${graphId}" style="width: 8px; height: 8px; background: #27ae60; border-radius: 50%; animation: pulse 2s ease-in-out infinite;"></span>
+                </div>
+            </div>
+        </div>
+        <div class="modal-body" style="padding: 1rem;">
+            <canvas id="${chartCanvasId}" style="height: 300px; width: 100%;"></canvas>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    openGraphs[graphId] = graphCount;
+    
+    makeModalDraggable(modal);
+    
+    // Load chart after modal is added to DOM
+    setTimeout(() => {
+        loadMetricsChartMulti(nodeName, metricType, '5m', chartCanvasId);
+        toggleAutoRefreshMulti(graphId);
+    }, 100);
+}
+
+function closeFloatingGraph(graphId) {
+    const modal = document.getElementById(graphId);
+    if (modal) {
+        // Stop auto-refresh if active
+        if (autoRefreshIntervals[graphId]) {
+            clearInterval(autoRefreshIntervals[graphId]);
+            delete autoRefreshIntervals[graphId];
+        }
+        modal.remove();
+        delete openGraphs[graphId];
+    }
+}
+
+// Change time range for floating graphs
+// Change time range for floating graphs
+function changeTimeRangeMulti(graphId, timeWindow) {
+    const modal = document.getElementById(graphId);
+    if (!modal) return;
+    
+    // Update active button
+    const buttons = modal.querySelectorAll('.time-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Store current time window
+    modal.dataset.timeWindow = timeWindow;
+    
+    // Reload chart
+    const isPod = modal.dataset.isPod === 'true';
+    const canvasId = modal.querySelector('canvas').id;
+    
+    if (isPod) {
+        loadPodMetricsChartMulti(
+            modal.dataset.nodeName,
+            modal.dataset.namespace,
+            modal.dataset.podName,
+            modal.dataset.metricType,
+            timeWindow,
+            canvasId
+        );
+    } else {
+        loadMetricsChartMulti(
+            modal.dataset.nodeName,
+            modal.dataset.metricType,
+            timeWindow,
+            canvasId
+        );
+    }
+    
+    // If auto-refresh is on, restart the interval with the new time window
+    const checkbox = document.getElementById(`refresh-toggle-${graphId}`);
+    if (checkbox && checkbox.checked && autoRefreshIntervals[graphId]) {
+        clearInterval(autoRefreshIntervals[graphId]);
+        
+        const indicator = document.getElementById(`refresh-indicator-${graphId}`);
+        
+        autoRefreshIntervals[graphId] = setInterval(() => {
+            const currentModal = document.getElementById(graphId);
+            if (!currentModal) {
+                clearInterval(autoRefreshIntervals[graphId]);
+                delete autoRefreshIntervals[graphId];
+                return;
+            }
+            
+            const canvasId = currentModal.querySelector('canvas').id;
+            
+            if (isPod) {
+                loadPodMetricsChartMulti(
+                    currentModal.dataset.nodeName,
+                    currentModal.dataset.namespace,
+                    currentModal.dataset.podName,
+                    currentModal.dataset.metricType,
+                    timeWindow,
+                    canvasId
+                );
+            } else {
+                loadMetricsChartMulti(
+                    currentModal.dataset.nodeName,
+                    currentModal.dataset.metricType,
+                    timeWindow,
+                    canvasId
+                );
+            }
+        }, 5000);
+    }
+}
+
+// Toggle auto-refresh for floating graphs
+function toggleAutoRefreshMulti(graphId) {
+    const checkbox = document.getElementById(`refresh-toggle-${graphId}`);
+    const indicator = document.getElementById(`refresh-indicator-${graphId}`);
+    const modal = document.getElementById(graphId);
+    
+    if (!modal) return;
+    
+    const timeWindow = modal.dataset.timeWindow || '5m';
+    const isPod = modal.dataset.isPod === 'true';
+    
+    if (checkbox.checked) {
+        // Start auto-refresh
+        indicator.style.background = '#27ae60';
+        indicator.style.animation = 'pulse 2s ease-in-out infinite';
+        
+        autoRefreshIntervals[graphId] = setInterval(() => {
+            const currentModal = document.getElementById(graphId);
+            if (!currentModal) {
+                clearInterval(autoRefreshIntervals[graphId]);
+                delete autoRefreshIntervals[graphId];
+                return;
+            }
+            
+            const canvasId = currentModal.querySelector('canvas').id;
+            
+            if (isPod) {
+                loadPodMetricsChartMulti(
+                    currentModal.dataset.nodeName,
+                    currentModal.dataset.namespace,
+                    currentModal.dataset.podName,
+                    currentModal.dataset.metricType,
+                    timeWindow,
+                    canvasId
+                );
+            } else {
+                loadMetricsChartMulti(
+                    currentModal.dataset.nodeName,
+                    currentModal.dataset.metricType,
+                    timeWindow,
+                    canvasId
+                );
+            }
+        }, 5000);
+    } else {
+        // Stop auto-refresh
+        if (autoRefreshIntervals[graphId]) {
+            clearInterval(autoRefreshIntervals[graphId]);
+            delete autoRefreshIntervals[graphId];
+        }
+        indicator.style.background = '#7f8c8d';
+        indicator.style.animation = 'none';
+    }
+}
+
+// Load pod metrics with custom canvas ID
+async function loadPodMetricsChartMulti(nodeName, namespace, podName, metricType, window = '5m', canvasId = 'metrics-chart') {
+    try {
+        const response = await fetch(`/api/node/${nodeName}/pod/${namespace}/${podName}/timeseries?metric=${metricType}&window=${window}`);
+        const data = await response.json();
+        
+        if (response.ok && data.timestamps && data.values) {
+            createPodChartMulti(data, metricType, canvasId);
+        } else {
+            console.error('No pod data available:', data.error);
+            const canvas = document.getElementById(canvasId);
+            if (canvas && canvas.parentElement) {
+                canvas.parentElement.innerHTML = `<p style="text-align: center; color: #e74c3c; padding: 2rem;">No pod metric data available</p>`;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading pod metrics:', error);
+        const canvas = document.getElementById(canvasId);
+        if (canvas && canvas.parentElement) {
+            canvas.parentElement.innerHTML = `<p style="text-align: center; color: #e74c3c; padding: 2rem;">Failed to load pod metrics</p>`;
+        }
+    }
+}
+
+
+// Load node metrics with custom canvas ID
+// Load node metrics with custom canvas ID
+async function loadMetricsChartMulti(nodeName, metricType, window = '5m', canvasId = 'metrics-chart') {
+    try {
+        const response = await fetch(`/api/node/${nodeName}/timeseries?metric=${metricType}&window=${window}`);
+        const data = await response.json();
+        
+        if (response.ok && data.datasets) {
+            createChartMulti(data, metricType, canvasId);
+        } else {
+            console.error('No data available:', data.error);
+            const canvas = document.getElementById(canvasId);
+            if (canvas && canvas.parentElement) {
+                canvas.parentElement.innerHTML = `<p style="text-align: center; color: #e74c3c; padding: 2rem;">No metric data available</p>`;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading metrics:', error);
+        const canvas = document.getElementById(canvasId);
+        if (canvas && canvas.parentElement) {
+            canvas.parentElement.innerHTML = `<p style="text-align: center; color: #e74c3c; padding: 2rem;">Failed to load metrics</p>`;
+        }
+    }
+}
+
+// Create pod chart with custom canvas
+// Create pod chart with custom canvas
+function createPodChartMulti(data, metricType, canvasId = 'metrics-chart') {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) {
+        console.error('Canvas not found:', canvasId);
+        return;
+    }
+    
+    // Destroy existing chart if it exists
+    if (canvas.chart) {
+        canvas.chart.destroy();
+    }
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Convert timestamps to labels
+    const labels = data.timestamps.map(ts => {
+        const date = new Date(ts * 1000);
+        return date.toLocaleTimeString();
+    });
+    
+    const dataset = {
+        label: `Pod ${metricType.toUpperCase()}`,
+        data: data.values,
+        borderColor: getMetricColor(metricType),
+        backgroundColor: getMetricColor(metricType, 0.1),
+        tension: 0.4,
+        fill: true
+    };
+    
+    canvas.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [dataset]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    });
+}
+
+// Create chart with custom canvas
+// Create chart with custom canvas
+function createChartMulti(data, metricType, canvasId = 'metrics-chart') {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) {
+        console.error('Canvas not found:', canvasId);
+        return;
+    }
+    
+    // Destroy existing chart if it exists
+    if (canvas.chart) {
+        canvas.chart.destroy();
+    }
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Prepare datasets
+    const datasets = [];
+    let labels = [];
+    
+    // Add emulation data if available
+    if (data.datasets.emulation_node) {
+        const emulationData = data.datasets.emulation_node;
+        labels = emulationData.timestamps.map(ts => {
+            const date = new Date(ts * 1000);
+            return date.toLocaleTimeString();
+        });
+        
+        datasets.push({
+            label: `Emulation ${metricType.toUpperCase()}`,
+            data: emulationData.values,
+            borderColor: getMetricColor(metricType),
+            backgroundColor: getMetricColor(metricType, 0.1),
+            tension: 0.4,
+            fill: true
+        });
+    }
+    
+    // Add real data if available
+    if (data.datasets.real_node) {
+        const realData = data.datasets.real_node;
+        
+        datasets.push({
+            label: `Real ${metricType.toUpperCase()}`,
+            data: realData.values,
+            borderColor: getRealMetricColor(metricType),
+            backgroundColor: getRealMetricColor(metricType, 0.1),
+            tension: 0.4,
+            fill: false,
+            borderDash: [5, 5]
+        });
+    }
+    
+    canvas.chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top'
+                }
+            }
+        }
+    });
+}
+
+// Toggle sidebar visibility
+document.getElementById('toggle-sidebar-btn').addEventListener('click', () => {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const toggleBtn = document.getElementById('toggle-sidebar-btn');
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    
+    sidebar.classList.add('hidden');
+    mainContent.classList.add('full-width');
+    toggleBtn.textContent = '≪';
+    sidebarToggleBtn.style.display = 'flex';
+});
+
+// Show sidebar when clicking the left edge button
+document.getElementById('sidebar-toggle-btn').addEventListener('click', () => {
+    const sidebar = document.querySelector('.sidebar');
+    const mainContent = document.querySelector('.main-content');
+    const toggleBtn = document.getElementById('toggle-sidebar-btn');
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    
+    sidebar.classList.remove('hidden');
+    mainContent.classList.remove('full-width');
+    toggleBtn.textContent = '≪';
+    sidebarToggleBtn.style.display = 'none';
 });
